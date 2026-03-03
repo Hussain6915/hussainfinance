@@ -836,4 +836,9 @@ async function boot() {
   setTab("overall");
 }
 
+
 boot();
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").catch(console.error);
+}
