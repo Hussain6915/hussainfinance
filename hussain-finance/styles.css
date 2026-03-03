@@ -480,4 +480,19 @@ textarea.input{ resize: vertical; min-height: 140px; }
   height:auto;
   border-radius: 14px;
   display:block;
+
+}
+
+/* iPhone full-screen safe area support */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  padding:
+    env(safe-area-inset-top)
+    env(safe-area-inset-right)
+    env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
 }
