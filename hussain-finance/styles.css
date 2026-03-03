@@ -496,3 +496,120 @@ body {
     env(safe-area-inset-bottom)
     env(safe-area-inset-left);
 }
+/* ===== Extra Modules UI ===== */
+
+.grid2 { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+@media (max-width: 980px){ .grid2{ grid-template-columns: 1fr; } }
+
+.rowWrap { display:flex; gap:12px; align-items:end; flex-wrap:wrap; }
+.field { display:flex; flex-direction:column; gap:6px; flex:1; min-width: 160px; }
+
+textarea {
+  width:100%;
+  min-height: 160px;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,.08);
+  outline:none;
+  resize: vertical;
+  background: rgba(255,255,255,.75);
+}
+
+.bigNumber { font-size: 26px; font-weight: 800; margin-top: 10px; }
+
+.hint { opacity:.7; font-size: 12px; }
+
+.waterStats { display:flex; gap:12px; flex-wrap:wrap; margin: 14px 0 10px; }
+.stat { background: rgba(255,255,255,.65); border:1px solid rgba(0,0,0,.06); border-radius: 16px; padding:12px 14px; min-width: 160px; }
+.statLabel { font-size: 12px; opacity:.7; }
+.statValue { font-size: 18px; font-weight: 800; margin-top: 4px; }
+.trophy { color: #b8860b; border-color: rgba(184,134,11,.35); background: rgba(255, 215, 0, 0.12); }
+
+.waterBar {
+  height: 12px;
+  background: rgba(0,0,0,.06);
+  border-radius: 999px;
+  overflow:hidden;
+  border: 1px solid rgba(0,0,0,.06);
+}
+.waterFill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(90,140,255,.85), rgba(120,230,255,.85));
+  border-radius: 999px;
+  transition: width .25s ease;
+}
+
+.glassGrid {
+  margin-top: 14px;
+  display:grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 10px;
+}
+@media (max-width: 980px){ .glassGrid{ grid-template-columns: repeat(6, minmax(0,1fr)); } }
+@media (max-width: 520px){ .glassGrid{ grid-template-columns: repeat(4, minmax(0,1fr)); } }
+
+.glassBtn {
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,.06);
+  background: rgba(255,255,255,.7);
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+  user-select:none;
+}
+.glassBtn:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(0,0,0,.08); }
+.glassBtn.active { background: rgba(90,140,255,.15); border-color: rgba(90,140,255,.35); }
+.glassIcon { font-size: 20px; }
+
+.quoteList { display:flex; flex-direction:column; gap: 12px; margin-top: 12px; }
+.quoteCard {
+  background: rgba(255,255,255,.65);
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 18px;
+  padding: 12px 14px;
+}
+.quoteText { font-weight: 700; }
+.quoteMeta { margin-top: 6px; font-size: 12px; opacity: .7; }
+
+.focusOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 25, .72);
+  backdrop-filter: blur(12px);
+  display:grid;
+  place-items:center;
+  z-index: 9999;
+}
+.focusOverlayInner {
+  width:min(560px, 92vw);
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 26px;
+  padding: 22px;
+  text-align:center;
+  color: #fff;
+}
+.focusOverlayTitle { font-size: 18px; opacity:.9; }
+.focusOverlayTimer { font-size: 54px; font-weight: 900; margin: 12px 0 8px; }
+.focusOverlayHint { opacity:.8; font-size: 13px; margin-bottom: 12px; }
+
+.mapBox { width:100%; height: 360px; border-radius: 18px; overflow:hidden; border: 1px solid rgba(0,0,0,.08); }
+
+.plansList { display:flex; flex-direction:column; gap:12px; margin-top: 12px; }
+.planRow {
+  display:grid;
+  grid-template-columns: 120px 1fr 160px 160px 200px;
+  gap:10px;
+  align-items:center;
+  background: rgba(255,255,255,.65);
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 18px;
+  padding: 10px 12px;
+}
+@media (max-width: 980px){
+  .planRow { grid-template-columns: 1fr; }
+}
+.planTag { font-weight:800; text-transform: capitalize; }
+.planActions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
