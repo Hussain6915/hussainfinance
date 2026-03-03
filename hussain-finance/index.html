@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ShambuTimes</title>
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Chart -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+ <link rel="stylesheet" href="styles.css?v=20260302-1">
+</head>
+
+<body>
+  <div class="bg">
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+  </div>
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+       <!-- Avatar (click to upload) -->
+<div class="avatarWrap" title="Click to change photo">
+  <img id="userAvatar" class="avatarImg" src="https://api.dicebear.com/8.x/shapes/svg?seed=turail" alt="Avatar">
+  <input id="avatarInput" type="file" accept="image/*" hidden>
+</div>
+        <div class="brand-title" id="brandTitle">Personal Dashboard</div>
+        <div class="brand-sub">Cloud sync • Phone / iPad / PC</div>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <div class="pill" id="clockPill">—</div>
+      <div class="pill" id="ramadanPill">—</div>
+      <div class="pill" id="weatherPill">Temp: —</div>
+
+      <button class="iconbtn" id="themeBtn" title="Toggle theme">
+        <i data-lucide="moon"></i>
+      </button>
+      <button class="iconbtn" id="settingsBtn" title="Settings">
+        <i data-lucide="settings"></i>
+      </button>
+      <button class="btn btn-ghost" id="logoutBtn">
+        <i data-lucide="log-out"></i>
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Auth Gate -->
+  <main class="container">
+    <section id="authView" class="card hero">
+      <div class="hero-left">
+        <h1 class="h1">Welcome</h1>
+        <p class="muted">Sign in with email + password. Your data stays synced across devices.</p>
+
+        <div class="tabs">
+          <button class="tab active" data-tab="login">Login</button>
+          <button class="tab" data-tab="signup">Create Account</button>
+        </div>
+
+        <div id="loginBox" class="stack">
+          <label class="field">
+            <span>Email</span>
+            <input id="loginEmail" type="email" placeholder="you@gmail.com" autocomplete="email" />
+          </label>
+          <label class="field">
+            <span>Password</span>
+            <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password" />
+          </label>
+          <button id="loginBtn" class="btn btn-primary">
+            <i data-lucide="key-round"></i> Login
+          </button>
+        </div>
+
+        <div id="signupBox" class="stack hidden">
+          <label class="field">
+            <span>Email</span>
+            <input id="signupEmail" type="email" placeholder="you@gmail.com" autocomplete="email" />
+          </label>
+          <label class="field">
+            <span>Password</span>
+            <input id="signupPass" type="password" placeholder="Create a strong password" autocomplete="new-password" />
+          </label>
+          <button id="signupBtn" class="btn btn-primary">
+            <i data-lucide="user-plus"></i> Create account
+          </button>
+        </div>
+
+        <p class="small muted">Tip: You can change your display name & theme in Settings after login.</p>
+      </div>
+
+      <div class="hero-right">
+        <div class="hero-card">
+          <div class="hero-chip"><i data-lucide="sparkles"></i> Premium UI</div>
+          <div class="hero-metric">
+            <div class="k">Today</div>
+            <div class="v" id="heroToday">—</div>
+          </div>
+          <div class="hero-metric">
+            <div class="k">Focus</div>
+            <div class="v" id="heroFocus">Ready</div>
+          </div>
+          <div class="hero-metric">
+            <div class="k">Mood</div>
+            <div class="v" id="heroMood">—</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- App -->
+    <section id="appView" class="hidden">
+      <!-- Dashboard Home -->
+      <section id="homeView" class="grid">
+        <div class="card wide">
+          <div class="row">
+            <div>
+              <h2 class="h2" id="welcomeTitle">Welcome</h2>
+              <p class="muted" id="welcomeSubtitle">Your space. Your pace.</p>
+            </div>
+            <div class="row">
+              <button class="btn btn-ghost" data-nav="focus"><i data-lucide="timer"></i> Focus</button>
+              <button class="btn btn-ghost" data-nav="friend"><i data-lucide="message-circle"></i> AI Friend</button>
+            </div>
+          </div>
+
+          <div class="tiles">
+            <div class="tile">
+              <div class="tile-top">
+                <span class="tile-label">Tasks</span>
+                <i data-lucide="check-square"></i>
+              </div>
+              <div class="tile-value" id="tileTasks">0</div>
+              <div class="tile-sub muted">Open tasks</div>
+            </div>
+
+            <div class="tile">
+              <div class="tile-top">
+                <span class="tile-label">Savings</span>
+                <i data-lucide="wallet"></i>
+              </div>
+              <div class="tile-value" id="tileSavings">—</div>
+              <div class="tile-sub muted">This month</div>
+            </div>
+
+            <div class="tile">
+              <div class="tile-top">
+                <span class="tile-label">Water</span>
+                <i data-lucide="droplet"></i>
+              </div>
+              <div class="tile-value" id="tileWater">0%</div>
+              <div class="tile-sub muted">Daily target</div>
+            </div>
+
+            <div class="tile">
+              <div class="tile-top">
+                <span class="tile-label">Mood</span>
+                <i data-lucide="smile"></i>
+              </div>
+              <div class="tile-value" id="tileMood">—</div>
+              <div class="tile-sub muted">Today</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3 class="h3">Modules</h3>
+            <span class="muted small">Open a module</span>
+          </div>
+          <div class="menuGrid">
+            <button class="menuBtn" data-nav="todo"><i data-lucide="check-circle-2"></i><span>To-Do</span></button>
+            <button class="menuBtn" data-nav="notes"><i data-lucide="sticky-note"></i><span>Notes</span></button>
+            <button class="menuBtn" data-nav="finance"><i data-lucide="bar-chart-3"></i><span>Finance</span></button>
+            <button class="menuBtn" data-nav="plans"><i data-lucide="map"></i><span>Plans</span></button>
+            <button class="menuBtn" data-nav="focus"><i data-lucide="timer"></i><span>Focus</span></button>
+            <button class="menuBtn" data-nav="water"><i data-lucide="droplets"></i><span>Water</span></button>
+            <button class="menuBtn" data-nav="mood"><i data-lucide="heart"></i><span>Mood</span></button>
+            <button class="menuBtn" data-nav="friend"><i data-lucide="sparkles"></i><span>AI Friend</span></button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3 class="h3">Quick Notes</h3>
+            <span class="muted small">Fast capture</span>
+          </div>
+          <textarea id="quickNote" class="textarea" placeholder="Write something…"></textarea>
+          <button class="btn btn-primary" id="saveQuickNote"><i data-lucide="save"></i> Save to Notes</button>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3 class="h3">Daily Quote</h3>
+            <span class="muted small">Motivation</span>
+          </div>
+          <div id="quoteBox" class="quote">—</div>
+        </div>
+      </section>
+
+      <!-- ToDo -->
+      <section id="todoView" class="hidden">
+        <div class="card">
+          <div class="card-head row">
+            <div>
+              <h2 class="h2">To-Do</h2>
+              <p class="muted">Add tasks • priorities • due date/time</p>
+            </div>
+            <div class="row">
+              <button class="btn btn-ghost" data-nav="home"><i data-lucide="home"></i> Home</button>
+              <button class="btn btn-danger" id="todoReset"><i data-lucide="trash-2"></i> Reset</button>
+            </div>
+          </div>
+
+          <div class="formGrid">
+            <label class="field">
+              <span>Task</span>
+              <input id="taskName" placeholder="e.g., Study 2 hours" />
+            </label>
+
+            <label class="field">
+              <span>Priority</span>
+              <select id="taskPriority">
+                <option value="High">High</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Date</span>
+              <input id="taskDate" type="date" />
+            </label>
+
+            <label class="field">
+              <span>Time</span>
+              <input id="taskTime" type="time" />
+            </label>
+
+            <button class="btn btn-primary" id="addTaskBtn"><i data-lucide="plus"></i> Add</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="list" id="taskList"></div>
+        </div>
+      </section>
+
+      <!-- Notes -->
+      <section id="notesView" class="hidden">
+        <div class="card">
+          <div class="card-head row">
+            <div>
+              <h2 class="h2">Notes</h2>
+              <p class="muted">Write • edit • search</p>
+            </div>
+            <div class="row">
+              <button class="btn btn-ghost" data-nav="home"><i data-lucide="home"></i> Home</button>
+              <button class="btn btn-danger" id="notesReset"><i data-lucide="trash-2"></i> Reset</button>
+            </div>
+          </div>
+
+          <div class="formGrid">
+            <label class="field">
+              <span>Title</span>
+              <input id="noteTitle" placeholder="e.g., Meeting points" />
+            </label>
+            <label class="field">
+              <span>Search</span>
+              <input id="noteSearch" placeholder="Search notes..." />
+            </label>
+          </div>
+
+          <textarea id="noteBody" class="textarea" placeholder="Write your note…"></textarea>
+
+          <div class="row">
+            <button class="btn btn-primary" id="saveNoteBtn"><i data-lucide="save"></i> Save</button>
+            <button class="btn btn-ghost" id="clearNoteBtn"><i data-lucide="x"></i> Clear</button>
+            <span class="muted small" id="editHint"></span>
+          </div>
+
+          <div class="divider"></div>
+          <div class="list" id="notesList"></div>
+        </div>
+      </section>
+
+      <!-- Finance -->
+      <section id="financeView" class="hidden">
+        <div class="card">
+          <div class="card-head row">
+            <div>
+              <h2 class="h2">Finance</h2>
+              <p class="muted">Subscriptions • expenses • analytics</p>
+            </div>
+            <div class="row">
+              <button class="btn btn-ghost" data-nav="home"><i data-lucide="home"></i> Home</button>
+              <button class="btn btn-danger" id="financeReset"><i data-lucide="trash-2"></i> Reset</button>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="card inner">
+              <h3 class="h3">Inputs</h3>
+
+              <label class="field">
+                <span>Month</span>
+                <input id="finMonth" type="month" />
+              </label>
+
+              <label class="field">
+                <span>Monthly Balance</span>
+                <input id="finBalance" type="number" placeholder="e.g., 130000" />
+              </label>
+
+              <label class="field">
+                <span>Daily Expense (per day)</span>
+                <input id="finDaily" type="number" placeholder="e.g., 500" />
+              </label>
+
+              <div class="divider"></div>
+
+              <div class="row">
+                <label class="field grow">
+                  <span>Service</span>
+                  <select id="serviceName">
+                    <option value="ChatGPT">ChatGPT</option>
+                    <option value="Spotify">Spotify</option>
+                    <option value="Netflix">Netflix</option>
+                    <option value="SIM">SIM</option>
+                  </select>
+                </label>
+
+                <label class="field grow">
+                  <span>Amount</span>
+                  <input id="serviceAmount" type="number" placeholder="e.g., 500" />
+                </label>
+
+                <button class="btn btn-primary" id="addServiceBtn"><i data-lucide="plus"></i> Add</button>
+              </div>
+
+              <div class="chips" id="serviceChips"></div>
+
+              <div class="divider"></div>
+
+              <div class="row">
+                <label class="field grow">
+                  <span>Custom expense name</span>
+                  <input id="customName" placeholder="e.g., Fuel" />
+                </label>
+                <label class="field grow">
+                  <span>Amount</span>
+                  <input id="customAmount" type="number" placeholder="e.g., 1500" />
+                </label>
+                <button class="btn btn-ghost" id="addCustomBtn"><i data-lucide="plus"></i> Add</button>
+              </div>
+
+              <div class="chips" id="customChips"></div>
+
+              <div class="divider"></div>
+
+              <button class="btn btn-primary" id="saveFinanceBtn"><i data-lucide="save"></i> Save month</button>
+            </div>
+
+            <div class="card inner">
+              <h3 class="h3">Analytics</h3>
+              <div class="tiles smallTiles">
+                <div class="tile">
+                  <div class="tile-top"><span class="tile-label">Balance</span><i data-lucide="credit-card"></i></div>
+                  <div class="tile-value" id="statBalance">—</div>
+                </div>
+                <div class="tile">
+                  <div class="tile-top"><span class="tile-label">Expenses</span><i data-lucide="receipt"></i></div>
+                  <div class="tile-value" id="statExpenses">—</div>
+                </div>
+                <div class="tile">
+                  <div class="tile-top"><span class="tile-label">Savings</span><i data-lucide="piggy-bank"></i></div>
+                  <div class="tile-value" id="statSavings">—</div>
+                </div>
+                <div class="tile">
+                  <div class="tile-top"><span class="tile-label">Daily Budget</span><i data-lucide="calendar-days"></i></div>
+                  <div class="tile-value" id="statDailyBudget">—</div>
+                </div>
+              </div>
+
+              <div class="chartWrap">
+                <canvas id="financeChart" height="220"></canvas>
+              </div>
+              <div class="muted small">Daily Budget = (Balance − Expenses) / 30</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Plans -->
+      <section id="plansView" class="hidden">
+        <div class="card">
+          <div class="card-head row">
+            <div>
+              <h2 class="h2">Plans</h2>
+              <p class="muted">Schedule • funds • map</p>
+            </div>
+            <div class="row">
+              <button class="btn btn-ghost" data-nav="home"><i data-lucide="home"></i> Home</button>
+              <button class="btn btn-danger" id="plansReset"><i data-lucide="trash-2"></i> Reset</button>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="card inner">
+              <label class="field">
+                <span>Type</span>
+                <select id="planType">
+                  <option>Wedding</option>
+                  <option>Leisure</option>
+                  <option>Movies</option>
+                  <option>Food</option>
+                  <option>Outing</option>
+                  <option>Out of City</option>
+                  <option>Car</option>
+                  <option>Business</option>
+                </select>
+              </label>
+
+              <div class="formGrid">
+                <label class="field">
+                  <span>Date</span>
+                  <input id="planDate" type="date" />
+                </label>
+                <label class="field">
+                  <span>Time</span>
+                  <input id="planTime" type="time" />
+                </label>
+              </div>
+
+              <label class="field">
+                <span>Description</span>
+                <input id="planDesc" placeholder="What’s the plan?" />
+              </label>
+
+              <label class="field">
+                <span>Funds</span>
+                <input id="planFunds" type="number" placeholder="e.g., 5000" />
+              </label>
+
+              <label class="field">
+                <span>Map search (optional)</span>
+                <input id="planPlace" placeholder="e.g., Lahore" />
+              </label>
+
+              <button class="btn btn-primary" id="savePlanBtn"><i data-lucide="save"></i> Save plan</button>
+
+              <div class="divider"></div>
+              <div class="list" id="plansList"></div>
+            </div>
+
+            <div class="card inner">
+              <h3 class="h3">Map</h3>
+              <iframe
+                id="mapFrame"
+                class="map"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                src="https://www.google.com/maps?q=Pakistan&output=embed">
+              </iframe>
+              <div class="muted small">Tip: type a place then save — map updates.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Water -->
+      <section id="waterView" class="hidden">
+        <div class="card">
+          <div class="card-head row">
+            <div>
+              <h2 class="h2">Water</h2>
+              <p class="muted">Daily intake • cups • target</p>
+            </div>
+            <div class="row">
+              <button class="btn btn-ghost" data-nav="home"><i data-lucide="home"></i> Home</button>
+              <button class="btn btn-danger" id="waterReset"><i data-lucide="trash-2"></i> Reset</button>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="card inner">
+              <label class="field">
+                <span>Daily target (ml)</span>
+                <input id="waterTarget" type="number" placeholder="e.g., 2000" />
+              </label>
+
+              <div class="row">
+                <button class="btn btn-primary" id="addWater250"><i data-lucide="plus"></i> +250ml</button>
+                <button class="btn btn-ghost" id="addWater500"><i data-lucide="plus"></i> +500ml</button>
+              </div>
+
+              <div class="divider"></div>
+              <div class="waterRow">
+                <div class="waterStat">
+                  <div class="muted">Today</div>
+                  <div class="big" id="waterToday">0 ml</div>
+                </div>
+                <div class="waterStat">
+                  <div class="muted">Progress</div>
+                  <div class="big" id="waterPct">0%</div>
+                </div>
+              </div>
+
+              <div class="cups" id="cupsGrid"></div>
+              <div class="muted small">When you hit target, cups turn gold ✨</div>
+            </div>
+
+            <div class="card inner">
+              <h3 class="h3">Streak</h3>
+              <div class="quote" id="waterTip">Stay consistent. Small wins daily.</div>
+              <div class="divider"></div>
+              <div class="list" id="waterHistory"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+<!-- trigger redeploy -->
+      <!-- Mood -->
+      <section id="moodView" class="hidden">
+        <div class="card">
+          <div class="card-head row">
+            <div>
+              <h2 class="h2">Mood</h2>
+              <p class="muted">Track daily • streaks • insights</p>
+            </div>
+            <div class="row">
+              <button class="btn btn-ghost" data-nav="home"><i data-lucide="home"></i> Home</button>
+              <button class="btn btn-danger" id="moodReset"><i data-lucide="trash-2"></i> Reset</button>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="card inner">
+              <h3 class="h3">How are you today?</h3>
+              <div class="moods" id="moodButtons"></div>
+
+              <label class="field">
+                <span>Note (optional)</span>
+                <textarea id="moodNote" class="textarea" placeholder="What happened today?"></textarea>
+              </label>
+
+              <button class="btn btn-primary" id="saveMoodBtn"><i data-lucide="save"></i> Save Today</button>
+
+              <div class="divider"></div>
+              <div class="quote" id="moodQuote">—</div>
+            </div>
+
+            <div class="card inner">
+              <div class="row">
+                <h3 class="h3">Insights</h3>
+                <span class="pill" id="moodStreak">Streak: 0</span>
+              </div>
+              <div class="chartWrap">
+                <canvas id="moodChart" height="220"></canvas>
+              </div>
+              <div class="divider"></div>
+              <div class="list" id="moodHistory"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Focus -->
+      <section id="focusView" class="hidden focusFull">
+        <div class="focusTop">
+          <button class="btn btn-ghost" data-nav="home"><i data-lucide="home"></i> Home</button>
+          <div class="row">
+            <button class="btn btn-ghost" id="enterFullscreen"><i data-lucide="maximize"></i> Fullscreen</button>
+            <button class="btn btn-danger" id="exitFocus"><i data-lucide="x"></i> Exit</button>
+          </div>
+        </div>
+
+        <div class="focusCenter">
+          <div class="focusTitle">Focus Mode</div>
+          <div class="focusTimer" id="focusTimer">25:00</div>
+          <div class="row">
+            <button class="btn btn-primary" id="focusStart"><i data-lucide="play"></i> Start</button>
+            <button class="btn btn-ghost" id="focusPause"><i data-lucide="pause"></i> Pause</button>
+            <button class="btn btn-danger" id="focusReset"><i data-lucide="rotate-ccw"></i> Reset</button>
+          </div>
+          <div class="muted small">Tip: set phone away. One session at a time.</div>
+        </div>
+      </section>
+
+      <!-- AI Friend -->
+      <section id="friendView" class="hidden">
+        <div class="card">
+          <div class="card-head row">
+            <div>
+              <h2 class="h2">AI Friend</h2> 
+              <p class="muted">Friendly chat • reads your saved dashboard summaries</p>
+            </div>
+            <div class="row">
+              <button class="btn btn-ghost" data-nav="home"><i data-lucide="home"></i> Home</button>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="card inner">
+              <h3 class="h3">Friend Settings</h3>
+              
+   
+  
+              
+
+              <label class="field">
+                <span>Friend name</span>
+                <input id="friendName" placeholder="e.g., Nova" />
+              </label>
+
+              <label class="field">
+                <span>Language</span>
+                <select id="friendLang">
+                  <option value="English" selected>English</option>
+                  <option value="Urdu">Urdu</option>
+                  <option value="Roman Urdu">Roman Urdu</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Avatar style</span>
+                <select id="friendAvatar">
+                  <option value="minimal" selected>Minimal</option>
+                  <option value="neo">Neo</option>
+                  <option value="fun">Fun</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>About you (for personalization)</span>
+                <textarea id="userBio" class="textarea" placeholder="Who are you? What do you like?"></textarea>
+              </label>
+
+              <button class="btn btn-primary" id="saveFriendSettings"><i data-lucide="save"></i> Save</button>
+              <div class="muted small">Your Gemini key stays on server (Vercel) — safer.</div>
+            </div>
+
+            <div class="card inner">
+              <h3 class="h3">Chat</h3>
+              <div class="chat" id="chatBox"></div>
+
+              <div class="row">
+                <input class="chatInput" id="chatInput" placeholder="Type a message..." />
+                <button class="btn btn-primary" id="sendChat"><i data-lucide="send"></i></button>
+              </div>
+
+              <div class="muted small">
+                To enable chat: deploy to Vercel and set <b>GEMINI_API_KEY</b> in Environment Variables.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </section>
+  </main>
+
+  <!-- Settings Modal -->
+  <div id="modalBackdrop" class="modalBack hidden"></div>
+  <div id="settingsModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modalHead">
+      <div>
+        <div class="h3">Settings</div>
+        <div class="muted small">Name • theme • password</div>
+      </div>
+      <button class="iconbtn" id="closeSettings"><i data-lucide="x"></i></button>
+    </div>
+
+    <div class="stack">
+      <label class="field">
+        <span>Display name</span>
+        <input id="displayName" placeholder="e.g., Turail" />
+      </label>
+
+      <div class="row">
+        <button class="btn btn-ghost" id="themeLight"><i data-lucide="sun"></i> Light</button>
+        <button class="btn btn-ghost" id="themeDark"><i data-lucide="moon"></i> Dark</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <label class="field">
+        <span>Change password (new)</span>
+        <input id="newPassword" type="password" placeholder="New password" />
+      </label>
+      <button class="btn btn-primary" id="changePasswordBtn"><i data-lucide="shield"></i> Update password</button>
+    </div>
+  </div>
+
+  <!-- Firebase (CDN, module) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+
+    window.__firebase = {};
+    window.__firebase.app = initializeApp({
+      apiKey: "AIzaSyBy3DFhW_heWIJpJVU--lCYjqNou2qS6wY",
+      authDomain: "hussainhub-5b1c1.firebaseapp.com",
+      projectId: "hussainhub-5b1c1",
+      storageBucket: "hussainhub-5b1c1.firebasestorage.app",
+      messagingSenderId: "307833717721",
+      appId: "1:307833717721:web:5e6581b2d267f033018fc8",
+    });
+    window.__firebase.auth = getAuth(window.__firebase.app);
+    window.__firebase.db = getFirestore(window.__firebase.app);
+  </script>
+
+  <script src="app.js" type="module"></script>
+</body>
+
+</html>
+
