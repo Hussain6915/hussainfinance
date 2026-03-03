@@ -289,5 +289,27 @@ async function boot() {
 
   setTab("overall");
 }
+// ===== Focus Buttons Fix =====
+document.addEventListener("click", (e) => {
+  if (e.target.id === "overlayHide") {
+    state.focus.overlay = false;
+    renderFocus();
+    scheduleSave();
+  }
 
+  if (e.target.id === "overlayStop") {
+    state.focus.running = false;
+    state.focus.overlay = false;
+    state.focus.endAt = null;
+    renderFocus();
+    scheduleSave();
+  }
+
+  if (e.target.id === "toggleFocusOverlay") {
+    state.focus.overlay = !state.focus.overlay;
+    renderFocus();
+    scheduleSave();
+  }
+});
 boot();
+
