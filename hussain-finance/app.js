@@ -182,7 +182,10 @@ function renderFocus() {
     ":" +
     String(secs).padStart(2, "0");
 
-  $("#focusOverlay").hidden = !state.focus.overlay;
+ const ov = $("#focusOverlay");
+if (ov) {
+  ov.classList.toggle("hidden", !state.focus.overlay);
+  ov.hidden = !state.focus.overlay;
 }
 
 function startFocus(min) {
@@ -311,5 +314,39 @@ document.addEventListener("click", (e) => {
     scheduleSave();
   }
 });
+   // Focus overlay controls (works even if button IDs are missing)
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+
+  const label = (btn.textContent || "").trim().toLowerCase();
+  const id = (btn.id || "").toLowerCase();
+  const action = (btn.dataset?.action || "").toLowerCase();
+
+  // Hide button
+  if (id.includes("hide") || action === "hide" || label === "hide") {
+    state.focus.overlay = false;
+    renderFocus();
+    scheduleSave();
+    return;
+  }
+
+  // Stop button
+  if (id.includes("stop") || action === "stop" || label === "stop") {
+    state.focus.running = false;
+    state.focus.overlay = false;
+    state.focus.endAt = null;
+
+    if (window.focusTimer) {
+      clearInterval(window.focusTimer);
+      window.focusTimer = null;
+    }
+
+    renderFocus();
+    scheduleSave();
+    return;
+  }
+});
 boot();
+
 
