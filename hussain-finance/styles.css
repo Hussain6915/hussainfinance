@@ -613,3 +613,7 @@ textarea {
 }
 .planTag { font-weight:800; text-transform: capitalize; }
 .planActions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+/* Force-hide focus overlay (some layouts override [hidden]) */
+#focusOverlay[hidden] { display: none !important; }
+#focusOverlay.hidden { display: none !important; }
+
